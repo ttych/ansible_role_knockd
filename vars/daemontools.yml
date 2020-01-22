@@ -8,7 +8,6 @@ knockd_run_dir: "{{ knockd_service_dir }}/run"
 knockd_pid_file: "{{ knockd_run_dir }}/knockd.pid"
 knockd_svscan_dir: "{{ knockd_service_dir }}/svscan"
 
-knockd_events: []
 knockd_directories:
   - { path: "{{ knockd_service_dir }}", owner: root, group: "{{ root_group }}", mode: "0750" }
   - { path: "{{ knockd_etc_dir }}", owner: root, group: "{{ root_group }}", mode: "0750" }

@@ -1,2 +1,4 @@
 ---
+root_group: wheel
+
 knockd_conf_file: /usr/local/etc/knockd.conf
