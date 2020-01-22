@@ -1,2 +1,22 @@
 ---
-# defaults file for ansible_role_knockd
+want_knockd: true
+
+root_group: root
+
+has_daemontools: false
+services_dir: /services
+daemontools_svscan_dir: "{{ services_dir }}/svscan"
+
+knockd_packages:
+  - knock
+
+knockd_services:
+  - knockd
+
+knockd_conf_file: /etc/knockd.conf
+knockd_log_file: /var/log/knockd.log
+knockd_pid_file: /var/run/knockd.pid
+knockd_events: []
+  # - { sequence:, seq_timeout:, command:, tcpflags: }
+  # - { sequence:, seq_timeout:, tcpflags:, start_command:, cmd_timeout:, stop_command: }
+knockd_directories: []

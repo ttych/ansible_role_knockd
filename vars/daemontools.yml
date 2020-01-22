@@ -1,0 +1,18 @@
+---
+knockd_service_dir: "{{ services_dir }}/knockd"
+knockd_etc_dir: "{{ knockd_service_dir }}/etc"
+knockd_conf_file: "{{ knockd_etc_dir }}/knockd.conf"
+knockd_log_dir: "{{ knockd_service_dir }}/log"
+knockd_log_file: "{{ knockd_log_dir }}/knockd.log"
+knockd_run_dir: "{{ knockd_service_dir }}/run"
+knockd_pid_file: "{{ knockd_run_dir }}/knockd.pid"
+knockd_svscan_dir: "{{ knockd_service_dir }}/svscan"
+
+knockd_events: []
+knockd_directories:
+  - { path: "{{ knockd_service_dir }}", owner: root, group: "{{ root_group }}", mode: "0750" }
+  - { path: "{{ knockd_etc_dir }}", owner: root, group: "{{ root_group }}", mode: "0750" }
+  - { path: "{{ knockd_log_dir }}", owner: root, group: "{{ root_group }}", mode: "0750" }
+  - { path: "{{ knockd_run_dir }}", owner: root, group: "{{ root_group }}", mode: "0750" }
+  - { path: "{{ knockd_svscan_dir }}", owner: root, group: "{{ root_group }}", mode: "0750" }
+  - { path: "{{ knockd_svscan_dir }}/log", owner: root, group: "{{ root_group }}", mode: "0750" }

@@ -1,0 +1,85 @@
+---
+- name: inherit interfaces
+  set_fact:
+    knockd_interface: "{{ ext_if }}"
+  when: ext_if is defined
+
+- name: set interfaces on router
+  set_fact:
+    knockd_interface: "{{ ansible_interfaces | difference([ansible_default_ipv4.device, 'lo0', 'pflog0']) | first }}"
+  when: knockd_interface is not defined and (is_router is defined and is_router)
+
+- name: set interfaces on non-router
+  set_fact:
+    knockd_interface: "{{ ansible_default_ipv4.device }}"
+  when: knockd_interface is not defined and (is_router is not defined or not is_router)
+
+
+- name: setup daemontools for knockd
+  block:
+    - name: stop system service
+      service:
+        name: "{{ item }}"
+        state: stopped
+      loop: "{{ knockd_services }}"
+
+    - name: disable FreeBSD service
+      include: sysrc.yml key="{{ item }}_enable" value="NO"
+      loop: "{{ knockd_services }}"
+      when: ansible_distribution == 'FreeBSD'
+
+    - name: set service directory tree
+      file:
+        path: "{{ item.path }}"
+        owner: "{{ item.owner }}"
+        group: "{{ item.group }}"
+        mode: "{{ item.mode }}"
+        state: directory
+      loop: "{{ knockd_directories }}"
+
+    - template:
+        src: "{{ item.src }}"
+        dest: "{{ item.dest }}"
+        owner: root
+        group: "{{ root_group }}"
+        mode: "{{ item.mode }}"
+      loop:
+        - { src: svscan/run, dest: "{{ knockd_svscan_dir }}/run", mode: "0750" }
+        - { src: svscan/log/run, dest: "{{ knockd_svscan_dir }}/log/run", mode: "0750" }
+
+    - name: link svscan
+      file:
+        src: "{{ knockd_svscan_dir }}"
+        dest: "{{ daemontools_svscan_dir }}/supervised/knockd"
+        state: link
+
+  when: has_daemontools
+
+
+- name: deploy knockd.conf
+  template:
+    src: knockd.conf
+    dest: "{{ knockd_conf_file }}"
+    owner: root
+    group: "{{ root_group }}"
+    mode: '0640'
+  register: t_knockd_config
+
+
+- name: setup FreeBSD service
+  include: sysrc.yml key="{{ knockd_service }}_enable" value="YES"
+  loop: "{{ knockd_services }}"
+  when: ansible_distribution == 'FreeBSD' and not has_daemontools
+
+- name: start service
+  block:
+    - service:
+        name: "{{ knockd_service }}"
+        state: started
+      register: t_knockd_service
+
+    - service:
+        name: "{{ knockd_service }}"
+        state: restarted
+      when: t_knockd_config.changed and not t_knockd_service.changed
+  when: not has_daemontools

@@ -1,0 +1,7 @@
+---
+
+- name: install knockd packages
+  package:
+    name: '{{ knockd_packages }}'
+    state: 'present'
+  register: knockd_install

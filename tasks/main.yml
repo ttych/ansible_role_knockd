@@ -1,2 +1,13 @@
 ---
-# tasks file for ansible_role_knockd
+- block:
+    - include_tasks: context.yml
+
+    - include_tasks: install.yml
+
+    - include_tasks: configure.yml
+
+  when: want_knockd
+
+- name: set has_knockd
+  set_fact:
+    has_knockd: "{{ want_knockd }}"
