@@ -65,6 +65,13 @@
     mode: '0640'
   register: t_knockd_config
 
+- name: setup FreeBSD newsyslog
+  template:
+    src: newsyslog.conf.d/knockd.conf
+    dest: "{{ newsyslog_conf_dir }}/knockd.conf"
+    owner: root
+    group: "{{ root_group }}"
+    mode: '0644'
 
 - name: setup FreeBSD service
   include: sysrc.yml key="{{ knockd_service }}_enable" value="YES"
