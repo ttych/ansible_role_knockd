@@ -72,14 +72,15 @@
     owner: root
     group: "{{ root_group }}"
     mode: '0644'
+  when: ansible_distribution == 'FreeBSD'
 
-- name: setup FreeBSD service
-  include: sysrc.yml key="{{ knockd_service }}_enable" value="YES"
-  loop: "{{ knockd_services }}"
-  when: ansible_distribution == 'FreeBSD' and not has_daemontools
-
-- name: start service
+- name: start standard service
   block:
+    - name: setup standard service
+      include: sysrc.yml key="{{ knockd_service }}_enable" value="YES"
+      loop: "{{ knockd_services }}"
+      when: ansible_distribution == 'FreeBSD'
+
     - service:
         name: "{{ knockd_service }}"
         state: started
@@ -89,4 +90,5 @@
         name: "{{ knockd_service }}"
         state: restarted
       when: t_knockd_config.changed and not t_knockd_service.changed
-  when: not has_daemontools
+
+  when: has_daemontools is not defined or not has_daemontools
