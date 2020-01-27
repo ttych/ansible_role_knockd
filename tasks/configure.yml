@@ -6,12 +6,12 @@
 
 - name: set interfaces on router
   set_fact:
-    knockd_interface: "{{ ansible_interfaces | difference([ansible_default_ipv4.device, 'lo0', 'pflog0']) | first | default(ansible_default_ipv4.device) }}"
+    knockd_interface: "{{ ansible_interfaces | difference([ansible_default_ipv4.interface, 'lo0', 'pflog0']) | first | default(ansible_default_ipv4.device) }}"
   when: knockd_interface is not defined and (is_router is defined and is_router)
 
 - name: set interfaces on non-router
   set_fact:
-    knockd_interface: "{{ ansible_default_ipv4.device }}"
+    knockd_interface: "{{ ansible_default_ipv4.interface }}"
   when: knockd_interface is not defined and (is_router is not defined or not is_router)
 
 
@@ -21,6 +21,12 @@
       service:
         name: "{{ item }}"
         state: stopped
+      loop: "{{ knockd_services }}"
+
+    - name: disable Linux service
+      service:
+        name: "{{ item }}"
+        enabled: false
       loop: "{{ knockd_services }}"
 
     - name: disable FreeBSD service
@@ -81,14 +87,22 @@
       loop: "{{ knockd_services }}"
       when: ansible_distribution == 'FreeBSD'
 
+    - name: enable standard Linux service
+      service:
+        name: "{{ item }}"
+        enabled: true
+      loop: "{{ knockd_services }}"
+
     - service:
-        name: "{{ knockd_service }}"
+        name: "{{ item }}"
         state: started
+      loop: "{{ knockd_services }}"
       register: t_knockd_service
 
     - service:
-        name: "{{ knockd_service }}"
+        name: "{{ item }}"
         state: restarted
+      loop: "{{ knockd_services }}"
       when: t_knockd_config.changed and not t_knockd_service.changed
 
   when: has_daemontools is not defined or not has_daemontools
