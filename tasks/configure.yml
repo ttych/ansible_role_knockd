@@ -56,7 +56,7 @@
     - name: link svscan
       file:
         src: "{{ knockd_svscan_dir }}"
-        dest: "{{ daemontools_svscan_dir }}/supervised/knockd"
+        dest: "{{ daemontools_svscan_dir }}/knockd"
         state: link
 
   when: has_daemontools
@@ -71,6 +71,7 @@
     mode: '0640'
   register: t_knockd_config
 
+
 - name: setup FreeBSD newsyslog
   template:
     src: newsyslog.conf.d/knockd.conf
@@ -80,9 +81,10 @@
     mode: '0644'
   when: ansible_distribution == 'FreeBSD'
 
+
 - name: start standard service
   block:
-    - name: setup standard service
+    - name: enable standard FreeBSD service
       include: sysrc.yml key="{{ knockd_service }}_enable" value="YES"
       loop: "{{ knockd_services }}"
       when: ansible_distribution == 'FreeBSD'

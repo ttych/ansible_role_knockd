@@ -5,7 +5,8 @@ root_group: root
 
 has_daemontools: false
 services_dir: /services
-daemontools_svscan_dir: "{{ services_dir }}/svscan"
+daemontools_dir: "{{ services_dir }}/svscan"
+daemontools_svscan_dir: "{{ daemontools_dir }}/supervised"
 
 knockd_packages:
   - knock
