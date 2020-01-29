@@ -94,6 +94,7 @@
         name: "{{ item }}"
         enabled: true
       loop: "{{ knockd_services }}"
+      when: ansible_system == 'Linux'
 
     - service:
         name: "{{ item }}"
