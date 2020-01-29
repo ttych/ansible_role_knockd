@@ -32,7 +32,7 @@
     - name: disable FreeBSD service
       include: sysrc.yml key="{{ item }}_enable" value="NO"
       loop: "{{ knockd_services }}"
-      when: ansible_distribution == 'FreeBSD'
+      when: ansible_system == 'FreeBSD'
 
     - name: set service directory tree
       file:
@@ -79,7 +79,7 @@
     owner: root
     group: "{{ root_group }}"
     mode: '0644'
-  when: ansible_distribution == 'FreeBSD'
+  when: ansible_system == 'FreeBSD'
 
 
 - name: start standard service
@@ -87,7 +87,7 @@
     - name: enable standard FreeBSD service
       include: sysrc.yml key="{{ knockd_service }}_enable" value="YES"
       loop: "{{ knockd_services }}"
-      when: ansible_distribution == 'FreeBSD'
+      when: ansible_system == 'FreeBSD'
 
     - name: enable standard Linux service
       service:

@@ -6,5 +6,5 @@
   ignore_errors: yes
 
 - name: "update sysrc {{ key }}"
-  shell: "sysrc {{ key }}={{ value }}"
+  shell: "sysrc {{ key }}=\"{{ value }}\""
   when: sysrc_key_status.rc != 0 or sysrc_key_status.stdout != value
