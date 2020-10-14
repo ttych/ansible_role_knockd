@@ -1,5 +1,5 @@
 ---
-knockd_service_dir: "{{ services_dir }}/knockd"
+knockd_service_dir: "{{ service_dir }}/knockd"
 knockd_etc_dir: "{{ knockd_service_dir }}/etc"
 knockd_conf_file: "{{ knockd_etc_dir }}/knockd.conf"
 knockd_log_dir: "{{ knockd_service_dir }}/log"
@@ -16,4 +16,4 @@ knockd_directories:
   - { path: "{{ knockd_svscan_dir }}", owner: root, group: "{{ root_group }}", mode: "0750" }
   - { path: "{{ knockd_svscan_dir }}/log", owner: root, group: "{{ root_group }}", mode: "0750" }
 
-newsyslog_conf_dir: "{{ services_newsyslog_dir }}"
+newsyslog_conf_dir: "{{ service_newsyslog_dir }}"

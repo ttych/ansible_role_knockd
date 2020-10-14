@@ -11,5 +11,6 @@
 
 - name: include daemontools specificc
   include_vars:
-    file: daemontools.yml
+    dir: vars
+    files_matching: daemontools.yml
   when: has_daemontools
