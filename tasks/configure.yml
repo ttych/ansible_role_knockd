@@ -4,15 +4,10 @@
     knockd_interface: "{{ ext_if }}"
   when: ext_if is defined
 
-- name: set interfaces on router
-  set_fact:
-    knockd_interface: "{{ ansible_interfaces | difference([ansible_default_ipv4.interface, 'lo0', 'pflog0']) | first | default(ansible_default_ipv4.interface) }}"
-  when: knockd_interface is not defined and (is_router is defined and is_router)
-
-- name: set interfaces on non-router
+- name: inherit interface from default
   set_fact:
     knockd_interface: "{{ ansible_default_ipv4.interface }}"
-  when: knockd_interface is not defined and (is_router is not defined or not is_router)
+  when: knockd_interface is not defined
 
 
 - name: setup daemontools for knockd
