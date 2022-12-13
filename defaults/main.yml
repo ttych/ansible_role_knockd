@@ -1,5 +1,6 @@
 ---
 want_knockd: true
+want_knockd_service: true
 
 root_group: root
 

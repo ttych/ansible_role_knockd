@@ -53,6 +53,7 @@
         src: "{{ knockd_svscan_dir }}"
         dest: "{{ daemontools_svscan_dir }}/knockd"
         state: link
+      when: want_knockd_service
 
   when: has_daemontools
 
@@ -84,23 +85,26 @@
       loop: "{{ knockd_services }}"
       when: ansible_system == 'FreeBSD'
 
-    - name: enable standard Linux service
-      service:
-        name: "{{ item }}"
-        enabled: true
-      loop: "{{ knockd_services }}"
-      when: ansible_system == 'Linux'
+    - block:
+        - name: enable standard Linux service
+          service:
+            name: "{{ item }}"
+            enabled: true
+          loop: "{{ knockd_services }}"
+          when: ansible_system == 'Linux'
 
-    - service:
-        name: "{{ item }}"
-        state: started
-      loop: "{{ knockd_services }}"
-      register: t_knockd_service
+        - service:
+            name: "{{ item }}"
+            state: started
+          loop: "{{ knockd_services }}"
+          register: t_knockd_service
 
-    - service:
-        name: "{{ item }}"
-        state: restarted
-      loop: "{{ knockd_services }}"
-      when: t_knockd_config.changed and not t_knockd_service.changed
+        - service:
+            name: "{{ item }}"
+            state: restarted
+          loop: "{{ knockd_services }}"
+          when: t_knockd_config.changed and not t_knockd_service.changed
+
+      when: want_knockd_service
 
   when: has_daemontools is not defined or not has_daemontools
